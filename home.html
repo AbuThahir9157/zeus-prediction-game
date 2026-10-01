@@ -3,160 +3,338 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ZEUS - Odd/Even UTR Prediction Platform</title>
+  <title>ZEUS - Premium UTR Odd/Even Prediction</title>
+  <!-- Tailwind CSS & FontAwesome Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-</head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Inter:wght@300;400;600;700&display=swap');
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top, #111827, #030712);
+      color: #f3f4f6;
+      min-height: 100vh;
+    }
 
-  <!-- Navigation Bar -->
-  <nav class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+    .brand-font {
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    .glass-card {
+      background: rgba(17, 24, 39, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    .gold-gradient {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+
+    .gold-glow:hover {
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+    }
+
+    .active-choice {
+      border-color: #f59e0b !important;
+      background: rgba(245, 158, 11, 0.15) !important;
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+  <!-- Header / Navigation Bar -->
+  <header class="border-b border-gray-800 bg-gray-900/60 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-xl shadow-lg shadow-amber-500/10">
-          ⚡
+        <div class="w-10 h-10 rounded-xl gold-gradient flex items-center justify-center text-gray-950 font-black text-xl shadow-lg">
+          <i class="fa-solid fa-bolt"></i>
         </div>
         <div>
-          <h1 class="text-xl font-bold tracking-wider text-amber-400">ZEUS</h1>
-          <p class="text-xs text-slate-400">UTR Prediction Simulator</p>
+          <h1 class="brand-font text-xl font-bold tracking-wider text-amber-400">ZEUS</h1>
+          <p class="text-xs text-gray-400">UTR Prediction Simulator</p>
         </div>
       </div>
-      
-      <!-- Wallet Display -->
-      <div class="flex items-center gap-4">
-        <div class="bg-slate-800/80 px-4 py-1.5 rounded-lg border border-slate-700 text-right">
-          <span class="text-xs text-slate-400 block">Wallet Balance</span>
-          <span id="userBalance" class="text-emerald-400 font-bold text-lg">₹10,000</span>
+
+      <div id="nav-user-info" class="hidden items-center gap-4">
+        <div class="flex items-center gap-2 bg-gray-800/80 px-4 py-1.5 rounded-full border border-gray-700">
+          <i class="fa-solid fa-wallet text-amber-400"></i>
+          <span class="text-xs text-gray-400">Balance:</span>
+          <span id="nav-balance" class="font-bold text-amber-400">₹0.00</span>
         </div>
+        <button onclick="logout()" class="text-gray-400 hover:text-red-400 transition-colors text-sm">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
       </div>
     </div>
-  </nav>
+  </header>
 
-  <!-- Main Content -->
-  <main class="max-w-4xl mx-auto w-full p-4 flex-1 flex flex-col gap-6 my-4">
-    
-    <!-- Profile Stats Banner -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
-        <p class="text-slate-400 text-xs">Profile Name</p>
-        <p class="text-amber-400 font-bold text-xl">ZEUS</p>
-      </div>
-      <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
-        <p class="text-slate-400 text-xs">Total Net Profit (after 10% Tax)</p>
-        <p id="totalProfit" class="text-emerald-400 font-bold text-xl">₹0</p>
-      </div>
-      <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
-        <p class="text-slate-400 text-xs">Total Loss</p>
-        <p id="totalLoss" class="text-rose-400 font-bold text-xl">₹0</p>
-      </div>
-    </div>
+  <!-- Main Container -->
+  <main class="flex-grow max-w-6xl w-full mx-auto p-4 md:p-6">
 
-    <!-- Prediction Game Box -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl">
-      <h2 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
-        <i class="fa-solid fa-dice text-amber-400"></i> Place Prediction
-      </h2>
+    <!-- Auth View (Register / Sign In) -->
+    <div id="auth-section" class="max-w-md mx-auto my-12">
+      <div class="glass-card rounded-2xl p-8 border border-gray-800">
+        <div class="text-center mb-6">
+          <h2 class="brand-font text-2xl font-bold text-amber-400 mb-2">Welcome Player</h2>
+          <p class="text-gray-400 text-sm">Sign in or register to start predicting</p>
+        </div>
 
-      <!-- Step 1: Select Odd or Even -->
-      <div class="mb-6">
-        <label class="text-sm font-semibold text-slate-400 block mb-2">1. Select Prediction</label>
-        <div class="grid grid-cols-2 gap-4">
-          <button id="btnOdd" onclick="selectPrediction('ODD')" class="py-4 rounded-xl font-bold border border-slate-700 bg-slate-800/50 hover:bg-slate-800 text-slate-300 text-lg transition">
-            ODD (1, 3, 5, 7, 9)
+        <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Username / Profile Name</label>
+            <div class="relative">
+              <i class="fa-solid fa-user absolute left-4 top-3.5 text-gray-500"></i>
+              <input type="text" id="auth-username" required placeholder="e.g. ZEUS_99" class="w-full bg-gray-900 border border-gray-700 rounded-xl py-3 pl-11 pr-4 text-white focus:outline-none focus:border-amber-400 transition-colors">
+            </div>
+          </div>
+
+          <button type="submit" class="w-full gold-gradient text-gray-950 font-bold py-3 rounded-xl gold-glow transition-all transform active:scale-95 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-gamepad"></i> Enter Platform
           </button>
-          <button id="btnEven" onclick="selectPrediction('EVEN')" class="py-4 rounded-xl font-bold border border-slate-700 bg-slate-800/50 hover:bg-slate-800 text-slate-300 text-lg transition">
-            EVEN (0, 2, 4, 6, 8)
-          </button>
-        </div>
+        </form>
       </div>
-
-      <!-- Step 2: Select Stake Amount -->
-      <div class="mb-6">
-        <label class="text-sm font-semibold text-slate-400 block mb-2">2. Select Stake Amount (₹)</label>
-        <div class="grid grid-cols-3 sm:grid-cols-5 gap-2" id="stakeButtons">
-          <!-- Dynamically filled JS buttons -->
-        </div>
-      </div>
-
-      <!-- Pay & Submit Button -->
-      <button id="submitBtn" onclick="submitPrediction()" class="w-full py-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-lg transition shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2">
-        <i class="fa-solid fa-lock"></i> Pay & Submit Prediction
-      </button>
     </div>
 
+    <!-- Prediction Platform View (Hidden until Login) -->
+    <div id="app-section" class="hidden space-y-6">
+
+      <!-- User Profile Dashboard Stats -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="glass-card rounded-2xl p-5 border border-gray-800 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-xl">
+            <i class="fa-solid fa-user-gear"></i>
+          </div>
+          <div>
+            <p class="text-xs text-gray-400 uppercase tracking-wider font-medium">Profile Name</p>
+            <h3 id="dash-username" class="text-lg font-bold text-white">---</h3>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-5 border border-gray-800 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl">
+            <i class="fa-solid fa-chart-line"></i>
+          </div>
+          <div>
+            <p class="text-xs text-gray-400 uppercase tracking-wider font-medium">Total Profit</p>
+            <h3 id="dash-profit" class="text-lg font-bold text-emerald-400">₹0.00</h3>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-5 border border-gray-800 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 text-xl">
+            <i class="fa-solid fa-chart-down text-rose-400"></i>
+          </div>
+          <div>
+            <p class="text-xs text-gray-400 uppercase tracking-wider font-medium">Total Loss</p>
+            <h3 id="dash-loss" class="text-lg font-bold text-rose-400">₹0.00</h3>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prediction Control Panel -->
+      <div class="glass-card rounded-2xl p-6 border border-gray-800">
+        <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-dice text-amber-400"></i> Place Prediction
+        </h2>
+
+        <!-- Step 1: ODD / EVEN Choice -->
+        <div class="mb-6">
+          <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">1. Select Prediction Outcome</label>
+          <div class="grid grid-cols-2 gap-4">
+            <button type="button" onclick="selectPrediction('ODD')" id="btn-odd" class="prediction-btn py-4 px-6 rounded-xl border border-gray-700 bg-gray-900 hover:bg-gray-800 font-bold text-center transition-all flex flex-col items-center gap-1">
+              <span class="text-lg text-amber-400">ODD</span>
+              <span class="text-xs text-gray-400 font-normal">(1, 3, 5, 7, 9)</span>
+            </button>
+            <button type="button" onclick="selectPrediction('EVEN')" id="btn-even" class="prediction-btn py-4 px-6 rounded-xl border border-gray-700 bg-gray-900 hover:bg-gray-800 font-bold text-center transition-all flex flex-col items-center gap-1">
+              <span class="text-lg text-amber-400">EVEN</span>
+              <span class="text-xs text-gray-400 font-normal">(0, 2, 4, 6, 8)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 2: Select Stake -->
+        <div class="mb-6">
+          <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">2. Select Stake Amount (₹)</label>
+          <div class="grid grid-cols-3 md:grid-cols-5 gap-3">
+            <button onclick="selectStake(100)" class="stake-btn bg-gray-900 border border-gray-700 py-2.5 rounded-xl text-sm font-semibold hover:border-amber-400 transition-colors">₹100</button>
+            <button onclick="selectStake(200)" class="stake-btn bg-gray-900 border border-gray-700 py-2.5 rounded-xl text-sm font-semibold hover:border-amber-400 transition-colors">₹200</button>
+            <button onclick="selectStake(300)" class="stake-btn bg-gray-900 border border-gray-700 py-2.5 rounded-xl text-sm font-semibold hover:border-amber-400 transition-colors">₹300</button>
+            <button onclick="selectStake(500)" class="stake-btn bg-gray-900 border border-gray-700 py-2.5 rounded-xl text-sm font-semibold hover:border-amber-400 transition-colors">₹500</button>
+            <button onclick="selectStake(1000)" class="stake-btn bg-gray-900 border border-gray-700 py-2.5 rounded-xl text-sm font-semibold hover:border-amber-400 transition-colors">₹1000</button>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button id="pay-btn" onclick="submitPrediction()" class="w-full gold-gradient text-gray-950 font-black py-4 rounded-xl gold-glow transition-all transform active:scale-95 text-center flex items-center justify-center gap-2">
+          <i class="fa-solid fa-lock text-gray-950"></i> Pay & Submit Prediction
+        </button>
+      </div>
+
+      <!-- Recent Transactions & Results -->
+      <div class="glass-card rounded-2xl p-6 border border-gray-800">
+        <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-clock-rotate-left text-amber-400"></i> Recent Predictions & Results
+        </h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-gray-400">
+            <thead class="bg-gray-900/80 text-xs uppercase text-gray-400 border-b border-gray-800">
+              <tr>
+                <th class="py-3 px-4">Order ID</th>
+                <th class="py-3 px-4">Prediction</th>
+                <th class="py-3 px-4">Stake</th>
+                <th class="py-3 px-4">Status</th>
+                <th class="py-3 px-4">Date</th>
+              </tr>
+            </thead>
+            <tbody id="history-rows" class="divide-y divide-gray-800">
+              <tr>
+                <td colspan="5" class="py-4 text-center text-gray-500">No predictions recorded yet</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
   </main>
 
   <script>
-    let currentPrediction = null;
-    let currentStake = null;
-    const stakes = [100, 200, 300, 400, 500, 600, 700, 800, 900];
+    let selectedPredictionChoice = null;
+    let selectedStakeAmount = null;
+    let currentUser = null;
 
-    const stakeContainer = document.getElementById('stakeButtons');
-    stakes.forEach(amt => {
-      const btn = document.createElement('button');
-      btn.innerText = `₹${amt}`;
-      btn.className = `py-2 rounded-lg font-semibold border border-slate-700 bg-slate-800/50 text-slate-300 hover:bg-slate-800 transition stake-btn-${amt}`;
-      btn.onclick = () => selectStake(amt);
-      stakeContainer.appendChild(btn);
-    });
+    // Load session state on load
+    window.onload = () => {
+      const savedUser = localStorage.getItem('zeus_user');
+      if (savedUser) {
+        currentUser = savedUser;
+        loadUserDashboard();
+      }
+    };
 
-    function selectPrediction(type) {
-      currentPrediction = type;
-      document.getElementById('btnOdd').className = type === 'ODD' 
-        ? 'py-4 rounded-xl font-bold border-2 border-amber-400 bg-amber-500/10 text-amber-400 text-lg'
-        : 'py-4 rounded-xl font-bold border border-slate-700 bg-slate-800/50 text-slate-300 text-lg';
-      
-      document.getElementById('btnEven').className = type === 'EVEN' 
-        ? 'py-4 rounded-xl font-bold border-2 border-amber-400 bg-amber-500/10 text-amber-400 text-lg'
-        : 'py-4 rounded-xl font-bold border border-slate-700 bg-slate-800/50 text-slate-300 text-lg';
-    }
+    function handleAuth(e) {
+      e.preventDefault();
+      const name = document.getElementById('auth-username').value.trim();
+      if (!name) return;
 
-    function selectStake(amt) {
-      currentStake = amt;
-      stakes.forEach(s => {
-        const b = document.querySelector(`.stake-btn-${s}`);
-        if(b) b.className = s === amt 
-          ? `py-2 rounded-lg font-semibold border-2 border-amber-400 bg-amber-500/10 text-amber-400 stake-btn-${s}`
-          : `py-2 rounded-lg font-semibold border border-slate-700 bg-slate-800/50 text-slate-300 hover:bg-slate-800 stake-btn-${s}`;
+      fetch('/api/user/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: name })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if(data.success) {
+          currentUser = name;
+          localStorage.setItem('zeus_user', name);
+          loadUserDashboard();
+        }
       });
     }
 
-    async function loadProfile() {
-      const res = await fetch('/api/user/profile');
-      const user = await res.json();
-      document.getElementById('userBalance').innerText = `₹${user.balance.toLocaleString()}`;
-      document.getElementById('totalProfit').innerText = `₹${user.total_profit.toLocaleString()}`;
-      document.getElementById('totalLoss').innerText = `₹${user.total_loss.toLocaleString()}`;
+    function logout() {
+      localStorage.removeItem('zeus_user');
+      currentUser = null;
+      document.getElementById('app-section').classList.add('hidden');
+      document.getElementById('nav-user-info').classList.add('hidden');
+      document.getElementById('nav-user-info').classList.remove('flex');
+      document.getElementById('auth-section').classList.remove('hidden');
     }
 
-    async function submitPrediction() {
-      if (!currentPrediction || !currentStake) {
-        alert('Please select both Prediction (Odd/Even) and Stake Amount!');
+    function loadUserDashboard() {
+      fetch(`/api/user/profile?username=${currentUser}`)
+        .then(res => res.json())
+        .then(user => {
+          document.getElementById('auth-section').classList.add('hidden');
+          document.getElementById('app-section').classList.remove('hidden');
+          document.getElementById('nav-user-info').classList.remove('hidden');
+          document.getElementById('nav-user-info').classList.add('flex');
+
+          document.getElementById('dash-username').innerText = user.name;
+          document.getElementById('nav-balance').innerText = `₹${user.balance.toFixed(2)}`;
+          document.getElementById('dash-profit').innerText = `₹${user.total_profit.toFixed(2)}`;
+          document.getElementById('dash-loss').innerText = `₹${user.total_loss.toFixed(2)}`;
+
+          loadHistory();
+        });
+    }
+
+    function selectPrediction(choice) {
+      selectedPredictionChoice = choice;
+      document.querySelectorAll('.prediction-btn').forEach(btn => btn.classList.remove('active-choice'));
+      if (choice === 'ODD') document.getElementById('btn-odd').classList.add('active-choice');
+      if (choice === 'EVEN') document.getElementById('btn-even').classList.add('active-choice');
+    }
+
+    function selectStake(amount) {
+      selectedStakeAmount = amount;
+      document.querySelectorAll('.stake-btn').forEach(btn => btn.classList.remove('active-choice'));
+      event.target.classList.add('active-choice');
+    }
+
+    function submitPrediction() {
+      if (!selectedPredictionChoice || !selectedStakeAmount) {
+        alert('Please select both a prediction (ODD/EVEN) and a stake amount!');
         return;
       }
 
-      try {
-        const res = await fetch('/api/predict/initiate-payment', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prediction: currentPrediction, stake: currentStake })
-        });
+      const btn = document.getElementById('pay-btn');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Connecting Payment...`;
 
-        const data = await res.json();
-
+      fetch('/api/predict/initiate-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          username: currentUser,
+          prediction: selectedPredictionChoice, 
+          stake: selectedStakeAmount 
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
         if (data.success && data.payUrl) {
-          // Redirect user directly to tailPay cashier checkout page
           window.location.href = data.payUrl;
         } else {
-          alert('Error creating payment: ' + (data.error || 'Unknown error'));
+          alert('Gateway Error: ' + (data.error || 'Failed to initialize payment'));
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fa-solid fa-lock"></i> Pay & Submit Prediction`;
         }
-      } catch (err) {
-        console.error("Payment submission error:", err);
-        alert('Network error connecting to payment gateway.');
-      }
+      })
+      .catch(err => {
+        alert('Connection error. Check your gateway configuration.');
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-lock"></i> Pay & Submit Prediction`;
+      });
     }
 
-    loadProfile();
+    function loadHistory() {
+      fetch(`/api/user/transactions?username=${currentUser}`)
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.getElementById('history-rows');
+          if(!data || data.length === 0) return;
+
+          tbody.innerHTML = data.map(tx => `
+            <tr>
+              <td class="py-3 px-4 font-mono text-xs text-amber-400">${tx.outTradeNo}</td>
+              <td class="py-3 px-4 font-bold">${tx.prediction}</td>
+              <td class="py-3 px-4">₹${tx.stake}</td>
+              <td class="py-3 px-4">
+                <span class="px-2.5 py-1 rounded-full text-xs font-bold ${
+                  tx.status === 'WIN' ? 'bg-emerald-500/20 text-emerald-400' :
+                  tx.status === 'LOSS' ? 'bg-rose-500/20 text-rose-400' :
+                  'bg-amber-500/20 text-amber-400'
+                }">${tx.status}</span>
+              </td>
+              <td class="py-3 px-4 text-xs">${new Date(tx.timestamp).toLocaleString()}</td>
+            </tr>
+          `).join('');
+        });
+    }
   </script>
 </body>
 </html>
