@@ -7,7 +7,7 @@ const path = require('path');
 const crypto = require('crypto');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+let PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -17,6 +17,7 @@ const TAILPAY_MCH_ID = process.env.TAILPAY_MCH_ID;
 const TAILPAY_SECRET = process.env.TAILPAY_SECRET;
 const TAILPAY_API_URL = process.env.TAILPAY_API_URL;
 
+// MD5 Signature Generator for tailPay
 function generateTailPaySign(params, secret) {
   const sortedKeys = Object.keys(params)
     .filter(key => key !== 'sign' && params[key] !== null && params[key] !== undefined && params[key] !== '')
@@ -28,7 +29,7 @@ function generateTailPaySign(params, secret) {
   return crypto.createHash('md5').update(signStr).digest('hex');
 }
 
-// Memory Database
+// In-Memory SQLite Database Setup
 const db = new sqlite3.Database(':memory:');
 
 db.serialize(() => {
@@ -51,16 +52,23 @@ db.serialize(() => {
   )`);
 });
 
+// Serve frontend page
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'home.html'));
+});
+
 // Authentication / Registration endpoint
 app.post('/api/user/auth', (req, res) => {
   const { username } = req.body;
+  if (!username) return res.status(400).json({ success: false, error: 'Username required' });
+
   db.run(`INSERT OR IGNORE INTO users (username) VALUES (?)`, [username], function(err) {
     if (err) return res.status(500).json({ success: false, error: err.message });
     res.json({ success: true, username });
   });
 });
 
-// User profile retrieval
+// User profile retrieval endpoint
 app.get('/api/user/profile', (req, res) => {
   const username = req.query.username || 'ZEUS';
   db.get('SELECT * FROM users WHERE username = ?', [username], (err, row) => {
@@ -78,12 +86,16 @@ app.get('/api/user/transactions', (req, res) => {
   });
 });
 
-// Initiate Payment endpoint
+// Initiate Payment Gateway session
 app.post('/api/predict/initiate-payment', async (req, res) => {
   const { username, prediction, stake } = req.body;
 
+  if (!TAILPAY_MCH_ID || !TAILPAY_SECRET || !TAILPAY_API_URL) {
+    return res.status(500).json({ success: false, error: 'Payment gateway configuration missing' });
+  }
+
   const outTradeNo = 'ORD' + Date.now() + Math.floor(1000 + Math.random() * 9000);
-  const notifyUrl = `http://${req.headers.host}/api/payment/callback`;
+  const notifyUrl = `https://${req.headers.host}/api/payment/callback`;
 
   const payload = {
     mchId: TAILPAY_MCH_ID,
@@ -119,7 +131,7 @@ app.post('/api/predict/initiate-payment', async (req, res) => {
   }
 });
 
-// Callback Webhook
+// tailPay Callback Webhook
 app.post('/api/payment/callback', (req, res) => {
   const { code, mchOrderNo, attach, sign } = req.body;
 
@@ -149,6 +161,20 @@ app.post('/api/payment/callback', (req, res) => {
   res.send('success');
 });
 
-app.listen(PORT, () => {
-  console.log(`ZEUS Server running on port ${PORT}`);
-});
+// Robust Port Listener with Automatic Failover
+function startServer(portToUse) {
+  const server = app.listen(portToUse, () => {
+    console.log(`⚡ ZEUS Server running securely on http://localhost:${portToUse}`);
+  });
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.warn(`⚠️ Port ${portToUse} is in use. Retrying on port ${portToUse + 1}...`);
+      startServer(portToUse + 1);
+    } else {
+      console.error('Server execution error:', err);
+    }
+  });
+}
+
+startServer(Number(PORT));

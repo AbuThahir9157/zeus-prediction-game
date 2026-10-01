@@ -1,31 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ZEUS - Premium UTR Odd/Even Prediction</title>
-  <!-- Tailwind CSS & FontAwesome Icons -->
+  <title>ZEUS - Professional Prediction Platform</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Inter:wght@300;400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
     
     body {
-      font-family: 'Inter', sans-serif;
-      background: radial-gradient(circle at top, #111827, #030712);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #030712;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(245, 158, 11, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.12) 0px, transparent 50%);
       color: #f3f4f6;
       min-height: 100vh;
     }
 
-    .brand-font {
-      font-family: 'Orbitron', sans-serif;
-    }
+    .brand-font { font-family: 'Orbitron', sans-serif; }
 
-    .glass-card {
-      background: rgba(17, 24, 39, 0.75);
-      backdrop-filter: blur(12px);
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     }
 
     .gold-gradient {
@@ -33,166 +34,196 @@
     }
 
     .gold-glow:hover {
-      box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+      box-shadow: 0 0 30px rgba(245, 158, 11, 0.4);
+      transform: translateY(-2px);
     }
 
     .active-choice {
       border-color: #f59e0b !important;
-      background: rgba(245, 158, 11, 0.15) !important;
-      box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+      background: linear-gradient(180deg, rgba(245, 158, 11, 0.25) 0%, rgba(245, 158, 11, 0.05) 100%) !important;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.35);
+    }
+
+    .avatar-hover-overlay {
+      opacity: 0;
+      transition: opacity 0.2s ease-in-out;
+    }
+    .avatar-container:hover .avatar-hover-overlay {
+      opacity: 1;
     }
   </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body class="flex flex-col min-h-screen justify-between">
 
-  <!-- Header / Navigation Bar -->
-  <header class="border-b border-gray-800 bg-gray-900/60 backdrop-blur-md sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+  <!-- TOP BAR NAVIGATION -->
+  <header class="border-b border-gray-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
+      
+      <!-- Brand Logo -->
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl gold-gradient flex items-center justify-center text-gray-950 font-black text-xl shadow-lg">
+        <div class="w-10 h-10 rounded-2xl gold-gradient flex items-center justify-center text-gray-950 font-black text-xl shadow-lg shadow-amber-500/20">
           <i class="fa-solid fa-bolt"></i>
         </div>
         <div>
-          <h1 class="brand-font text-xl font-bold tracking-wider text-amber-400">ZEUS</h1>
-          <p class="text-xs text-gray-400">UTR Prediction Simulator</p>
+          <h1 class="brand-font text-lg font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-200">ZEUS PRO</h1>
+          <p class="text-[10px] text-gray-400 flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Live Engine Ready
+          </p>
         </div>
       </div>
 
+      <!-- Navigation User Bar -->
       <div id="nav-user-info" class="hidden items-center gap-4">
-        <div class="flex items-center gap-2 bg-gray-800/80 px-4 py-1.5 rounded-full border border-gray-700">
-          <i class="fa-solid fa-wallet text-amber-400"></i>
-          <span class="text-xs text-gray-400">Balance:</span>
-          <span id="nav-balance" class="font-bold text-amber-400">₹0.00</span>
+        <!-- Balance Pill -->
+        <div class="flex items-center gap-2 bg-slate-900/90 px-3.5 py-1.5 rounded-2xl border border-amber-500/30">
+          <i class="fa-solid fa-wallet text-amber-400 text-xs"></i>
+          <span class="text-[10px] text-gray-400 uppercase font-bold">Balance:</span>
+          <span id="nav-balance" class="font-bold text-amber-400 text-xs">₹0.00</span>
         </div>
-        <button onclick="logout()" class="text-gray-400 hover:text-red-400 transition-colors text-sm">
-          <i class="fa-solid fa-right-from-bracket"></i>
+
+        <!-- Logout Button -->
+        <button onclick="logout()" class="p-2 rounded-xl bg-slate-900 hover:bg-rose-500/20 border border-gray-800 hover:border-rose-500/40 text-gray-400 hover:text-rose-400 transition-all text-xs" title="Logout">
+          <i class="fa-solid fa-power-off"></i>
         </button>
       </div>
+
     </div>
   </header>
 
-  <!-- Main Container -->
-  <main class="flex-grow max-w-6xl w-full mx-auto p-4 md:p-6">
+  <!-- MAIN CONTAINER -->
+  <main class="flex-grow max-w-5xl w-full mx-auto p-4 sm:p-6 my-4">
 
-    <!-- Auth View (Register / Sign In) -->
+    <!-- LOGIN / REGISTER CARD -->
     <div id="auth-section" class="max-w-md mx-auto my-12">
-      <div class="glass-card rounded-2xl p-8 border border-gray-800">
+      <div class="glass-panel rounded-3xl p-8 border border-gray-800">
         <div class="text-center mb-6">
-          <h2 class="brand-font text-2xl font-bold text-amber-400 mb-2">Welcome Player</h2>
-          <p class="text-gray-400 text-sm">Sign in or register to start predicting</p>
+          <div class="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-2xl mx-auto mb-3">
+            <i class="fa-solid fa-user-gear"></i>
+          </div>
+          <h2 class="brand-font text-xl font-bold text-white mb-1">Access Terminal</h2>
+          <p class="text-xs text-gray-400">Sign in or create account to begin</p>
         </div>
 
-        <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4">
+        <form onsubmit="handleAuth(event)" class="space-y-4">
           <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Username / Profile Name</label>
+            <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2">Trader Identity</label>
             <div class="relative">
-              <i class="fa-solid fa-user absolute left-4 top-3.5 text-gray-500"></i>
-              <input type="text" id="auth-username" required placeholder="e.g. ZEUS_99" class="w-full bg-gray-900 border border-gray-700 rounded-xl py-3 pl-11 pr-4 text-white focus:outline-none focus:border-amber-400 transition-colors">
+              <i class="fa-solid fa-id-card absolute left-4 top-3.5 text-gray-500 text-xs"></i>
+              <input type="text" id="auth-username" required placeholder="Enter Username..." class="w-full bg-slate-950 border border-gray-800 rounded-2xl py-3 pl-11 pr-4 text-xs text-white focus:outline-none focus:border-amber-400 transition-all">
             </div>
           </div>
 
-          <button type="submit" class="w-full gold-gradient text-gray-950 font-bold py-3 rounded-xl gold-glow transition-all transform active:scale-95 flex items-center justify-center gap-2">
-            <i class="fa-solid fa-gamepad"></i> Enter Platform
+          <button type="submit" class="w-full gold-gradient text-gray-950 font-extrabold py-3.5 rounded-2xl gold-glow transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
+            <i class="fa-solid fa-right-to-bracket"></i> Connect Terminal
           </button>
         </form>
       </div>
     </div>
 
-    <!-- Prediction Platform View (Hidden until Login) -->
+    <!-- MAIN DASHBOARD PLATFORM -->
     <div id="app-section" class="hidden space-y-6">
 
-      <!-- User Profile Dashboard Stats -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="glass-card rounded-2xl p-5 border border-gray-800 flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-xl">
-            <i class="fa-solid fa-user-gear"></i>
-          </div>
-          <div>
-            <p class="text-xs text-gray-400 uppercase tracking-wider font-medium">Profile Name</p>
-            <h3 id="dash-username" class="text-lg font-bold text-white">---</h3>
-          </div>
-        </div>
+      <!-- PROFILE HEADER & UPLOAD CARD -->
+      <div class="glass-panel rounded-3xl p-6 border border-gray-800 relative overflow-hidden">
+        <div class="flex flex-col sm:flex-row items-center gap-6 justify-between">
+          
+          <div class="flex items-center gap-5">
+            <!-- AVATAR UPLOAD CONTAINER -->
+            <div class="relative w-20 h-20 rounded-2xl overflow-hidden border-2 border-amber-500/40 shadow-xl bg-slate-900 avatar-container group cursor-pointer" onclick="document.getElementById('avatar-input').click()">
+              <img id="user-avatar-img" src="https://api.dicebear.com/7.x/bottts/svg?seed=ZEUS" alt="Avatar" class="w-full h-full object-cover">
+              
+              <div class="avatar-hover-overlay absolute inset-0 bg-black/75 flex flex-col items-center justify-center text-amber-400">
+                <i class="fa-solid fa-camera text-base"></i>
+                <span class="text-[9px] font-bold uppercase mt-1">Upload</span>
+              </div>
+            </div>
 
-        <div class="glass-card rounded-2xl p-5 border border-gray-800 flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl">
-            <i class="fa-solid fa-chart-line"></i>
-          </div>
-          <div>
-            <p class="text-xs text-gray-400 uppercase tracking-wider font-medium">Total Profit</p>
-            <h3 id="dash-profit" class="text-lg font-bold text-emerald-400">₹0.00</h3>
-          </div>
-        </div>
+            <!-- Hidden File Input -->
+            <input type="file" id="avatar-input" accept="image/*" class="hidden" onchange="uploadAvatar(event)">
 
-        <div class="glass-card rounded-2xl p-5 border border-gray-800 flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 text-xl">
-            <i class="fa-solid fa-chart-down text-rose-400"></i>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 id="dash-username" class="brand-font text-lg font-bold text-white">---</h2>
+                <span class="bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-md">PRO</span>
+              </div>
+              <p class="text-xs text-gray-400 mt-0.5"><i class="fa-solid fa-circle-check text-emerald-400 text-[10px]"></i> Verified Account</p>
+            </div>
           </div>
-          <div>
-            <p class="text-xs text-gray-400 uppercase tracking-wider font-medium">Total Loss</p>
-            <h3 id="dash-loss" class="text-lg font-bold text-rose-400">₹0.00</h3>
+
+          <!-- PROFIT & LOSS DISPLAY -->
+          <div class="flex gap-4 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 border-gray-800 pt-4 sm:pt-0">
+            <div class="bg-slate-950/80 px-4 py-2.5 rounded-2xl border border-emerald-500/20 text-center min-w-[110px]">
+              <span class="block text-[10px] font-bold uppercase text-gray-400">Total Profit</span>
+              <span id="dash-profit" class="text-sm font-extrabold text-emerald-400">₹0.00</span>
+            </div>
+
+            <div class="bg-slate-950/80 px-4 py-2.5 rounded-2xl border border-rose-500/20 text-center min-w-[110px]">
+              <span class="block text-[10px] font-bold uppercase text-gray-400">Total Loss</span>
+              <span id="dash-loss" class="text-sm font-extrabold text-rose-400">₹0.00</span>
+            </div>
           </div>
+
         </div>
       </div>
 
-      <!-- Prediction Control Panel -->
-      <div class="glass-card rounded-2xl p-6 border border-gray-800">
-        <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-dice text-amber-400"></i> Place Prediction
-        </h2>
+      <!-- PREDICTION SECTION -->
+      <div class="glass-panel rounded-3xl p-6 sm:p-8 border border-gray-800">
+        <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-dice text-amber-400"></i> Select Prediction Outcome
+        </h3>
 
-        <!-- Step 1: ODD / EVEN Choice -->
-        <div class="mb-6">
-          <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">1. Select Prediction Outcome</label>
-          <div class="grid grid-cols-2 gap-4">
-            <button type="button" onclick="selectPrediction('ODD')" id="btn-odd" class="prediction-btn py-4 px-6 rounded-xl border border-gray-700 bg-gray-900 hover:bg-gray-800 font-bold text-center transition-all flex flex-col items-center gap-1">
-              <span class="text-lg text-amber-400">ODD</span>
-              <span class="text-xs text-gray-400 font-normal">(1, 3, 5, 7, 9)</span>
-            </button>
-            <button type="button" onclick="selectPrediction('EVEN')" id="btn-even" class="prediction-btn py-4 px-6 rounded-xl border border-gray-700 bg-gray-900 hover:bg-gray-800 font-bold text-center transition-all flex flex-col items-center gap-1">
-              <span class="text-lg text-amber-400">EVEN</span>
-              <span class="text-xs text-gray-400 font-normal">(0, 2, 4, 6, 8)</span>
-            </button>
-          </div>
+        <!-- ODD / EVEN TILES -->
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <button type="button" onclick="selectPrediction('ODD')" id="btn-odd" class="prediction-btn p-5 rounded-2xl border border-gray-800 bg-slate-950 hover:bg-slate-900 transition-all flex flex-col items-center gap-2 group">
+            <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-dice-one"></i>
+            </div>
+            <span class="brand-font text-amber-400 font-extrabold text-sm">ODD</span>
+            <span class="text-[10px] text-gray-500">(1, 3, 5, 7, 9)</span>
+          </button>
+
+          <button type="button" onclick="selectPrediction('EVEN')" id="btn-even" class="prediction-btn p-5 rounded-2xl border border-gray-800 bg-slate-950 hover:bg-slate-900 transition-all flex flex-col items-center gap-2 group">
+            <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-dice-two"></i>
+            </div>
+            <span class="brand-font text-indigo-400 font-extrabold text-sm">EVEN</span>
+            <span class="text-[10px] text-gray-500">(0, 2, 4, 6, 8)</span>
+          </button>
         </div>
 
-        <!-- Step 2: Select Stake -->
-        <div class="mb-6">
-          <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">2. Select Stake Amount (₹)</label>
-          <div class="grid grid-cols-3 md:grid-cols-5 gap-3">
-            <button onclick="selectStake(100)" class="stake-btn bg-gray-900 border border-gray-700 py-2.5 rounded-xl text-sm font-semibold hover:border-amber-400 transition-colors">₹100</button>
-            <button onclick="selectStake(200)" class="stake-btn bg-gray-900 border border-gray-700 py-2.5 rounded-xl text-sm font-semibold hover:border-amber-400 transition-colors">₹200</button>
-            <button onclick="selectStake(300)" class="stake-btn bg-gray-900 border border-gray-700 py-2.5 rounded-xl text-sm font-semibold hover:border-amber-400 transition-colors">₹300</button>
-            <button onclick="selectStake(500)" class="stake-btn bg-gray-900 border border-gray-700 py-2.5 rounded-xl text-sm font-semibold hover:border-amber-400 transition-colors">₹500</button>
-            <button onclick="selectStake(1000)" class="stake-btn bg-gray-900 border border-gray-700 py-2.5 rounded-xl text-sm font-semibold hover:border-amber-400 transition-colors">₹1000</button>
-          </div>
+        <!-- STAKE OPTIONS -->
+        <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3">Select Stake Amount (₹)</label>
+        <div class="grid grid-cols-3 sm:grid-cols-5 gap-3 mb-6">
+          <button onclick="selectStake(100)" class="stake-btn bg-slate-950 border border-gray-800 py-3 rounded-xl text-xs font-bold hover:border-amber-400 transition-all">₹100</button>
+          <button onclick="selectStake(200)" class="stake-btn bg-slate-950 border border-gray-800 py-3 rounded-xl text-xs font-bold hover:border-amber-400 transition-all">₹200</button>
+          <button onclick="selectStake(500)" class="stake-btn bg-slate-950 border border-gray-800 py-3 rounded-xl text-xs font-bold hover:border-amber-400 transition-all">₹500</button>
+          <button onclick="selectStake(1000)" class="stake-btn bg-slate-950 border border-gray-800 py-3 rounded-xl text-xs font-bold hover:border-amber-400 transition-all">₹1000</button>
+          <button onclick="selectStake(2500)" class="stake-btn bg-slate-950 border border-gray-800 py-3 rounded-xl text-xs font-bold hover:border-amber-400 transition-all">₹2500</button>
         </div>
 
-        <!-- Submit Button -->
-        <button id="pay-btn" onclick="submitPrediction()" class="w-full gold-gradient text-gray-950 font-black py-4 rounded-xl gold-glow transition-all transform active:scale-95 text-center flex items-center justify-center gap-2">
-          <i class="fa-solid fa-lock text-gray-950"></i> Pay & Submit Prediction
+        <button id="pay-btn" onclick="submitPrediction()" class="w-full gold-gradient text-gray-950 font-black py-4 rounded-2xl gold-glow transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
+          <i class="fa-solid fa-shield-cat"></i> Pay & Start Prediction
         </button>
       </div>
 
-      <!-- Recent Transactions & Results -->
-      <div class="glass-card rounded-2xl p-6 border border-gray-800">
-        <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-clock-rotate-left text-amber-400"></i> Recent Predictions & Results
-        </h2>
+      <!-- TRANSACTION HISTORY TABLE -->
+      <div class="glass-panel rounded-3xl p-6 border border-gray-800">
+        <h3 class="text-xs font-bold text-white mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-clock-rotate-left text-amber-400"></i> Transaction Logs
+        </h3>
         <div class="overflow-x-auto">
-          <table class="w-full text-left text-sm text-gray-400">
-            <thead class="bg-gray-900/80 text-xs uppercase text-gray-400 border-b border-gray-800">
+          <table class="w-full text-left text-xs text-gray-400">
+            <thead class="bg-slate-950/80 text-[10px] uppercase font-bold text-gray-500 border-b border-gray-800">
               <tr>
                 <th class="py-3 px-4">Order ID</th>
                 <th class="py-3 px-4">Prediction</th>
                 <th class="py-3 px-4">Stake</th>
                 <th class="py-3 px-4">Status</th>
-                <th class="py-3 px-4">Date</th>
+                <th class="py-3 px-4">Timestamp</th>
               </tr>
             </thead>
-            <tbody id="history-rows" class="divide-y divide-gray-800">
-              <tr>
-                <td colspan="5" class="py-4 text-center text-gray-500">No predictions recorded yet</td>
-              </tr>
+            <tbody id="history-rows" class="divide-y divide-gray-800/60 font-medium">
+              <tr><td colspan="5" class="py-6 text-center text-gray-500">No predictions made yet</td></tr>
             </tbody>
           </table>
         </div>
@@ -201,12 +232,15 @@
     </div>
   </main>
 
+  <footer class="border-t border-gray-900 py-4 text-center text-xs text-gray-600">
+    <p>© 2026 ZEUS Platform Engine • Secure Gateway Integrated</p>
+  </footer>
+
   <script>
     let selectedPredictionChoice = null;
     let selectedStakeAmount = null;
     let currentUser = null;
 
-    // Load session state on load
     window.onload = () => {
       const savedUser = localStorage.getItem('zeus_user');
       if (savedUser) {
@@ -253,13 +287,39 @@
           document.getElementById('nav-user-info').classList.remove('hidden');
           document.getElementById('nav-user-info').classList.add('flex');
 
-          document.getElementById('dash-username').innerText = user.name;
+          document.getElementById('dash-username').innerText = user.username;
           document.getElementById('nav-balance').innerText = `₹${user.balance.toFixed(2)}`;
           document.getElementById('dash-profit').innerText = `₹${user.total_profit.toFixed(2)}`;
           document.getElementById('dash-loss').innerText = `₹${user.total_loss.toFixed(2)}`;
 
+          if(user.avatar) {
+            document.getElementById('user-avatar-img').src = user.avatar;
+          }
+
           loadHistory();
         });
+    }
+
+    function uploadAvatar(event) {
+      const file = event.target.files[0];
+      if(!file) return;
+
+      const formData = new FormData();
+      formData.append('avatar', file);
+      formData.append('username', currentUser);
+
+      fetch('/api/user/upload-avatar', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        if(data.success) {
+          document.getElementById('user-avatar-img').src = data.avatarUrl;
+        } else {
+          alert('Upload failed: ' + (data.error || 'Unknown error'));
+        }
+      });
     }
 
     function selectPrediction(choice) {
@@ -277,13 +337,13 @@
 
     function submitPrediction() {
       if (!selectedPredictionChoice || !selectedStakeAmount) {
-        alert('Please select both a prediction (ODD/EVEN) and a stake amount!');
+        alert('Please choose prediction (ODD/EVEN) and a stake amount!');
         return;
       }
 
       const btn = document.getElementById('pay-btn');
       btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Connecting Payment...`;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Connecting Gateway...`;
 
       fetch('/api/predict/initiate-payment', {
         method: 'POST',
@@ -299,15 +359,10 @@
         if (data.success && data.payUrl) {
           window.location.href = data.payUrl;
         } else {
-          alert('Gateway Error: ' + (data.error || 'Failed to initialize payment'));
+          alert('Gateway Error: ' + (data.error || 'Payment error'));
           btn.disabled = false;
-          btn.innerHTML = `<i class="fa-solid fa-lock"></i> Pay & Submit Prediction`;
+          btn.innerHTML = `<i class="fa-solid fa-shield-cat"></i> Pay & Start Prediction`;
         }
-      })
-      .catch(err => {
-        alert('Connection error. Check your gateway configuration.');
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-lock"></i> Pay & Submit Prediction`;
       });
     }
 
@@ -319,18 +374,18 @@
           if(!data || data.length === 0) return;
 
           tbody.innerHTML = data.map(tx => `
-            <tr>
-              <td class="py-3 px-4 font-mono text-xs text-amber-400">${tx.outTradeNo}</td>
-              <td class="py-3 px-4 font-bold">${tx.prediction}</td>
+            <tr class="hover:bg-slate-900/40">
+              <td class="py-3 px-4 font-mono text-amber-400 font-bold">${tx.outTradeNo}</td>
+              <td class="py-3 px-4 font-bold text-white">${tx.prediction}</td>
               <td class="py-3 px-4">₹${tx.stake}</td>
               <td class="py-3 px-4">
-                <span class="px-2.5 py-1 rounded-full text-xs font-bold ${
-                  tx.status === 'WIN' ? 'bg-emerald-500/20 text-emerald-400' :
-                  tx.status === 'LOSS' ? 'bg-rose-500/20 text-rose-400' :
-                  'bg-amber-500/20 text-amber-400'
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                  tx.status === 'WIN' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
+                  tx.status === 'LOSS' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' :
+                  'bg-amber-500/20 text-amber-400 border border-amber-500/30'
                 }">${tx.status}</span>
               </td>
-              <td class="py-3 px-4 text-xs">${new Date(tx.timestamp).toLocaleString()}</td>
+              <td class="py-3 px-4 text-gray-500">${new Date(tx.timestamp).toLocaleString()}</td>
             </tr>
           `).join('');
         });
